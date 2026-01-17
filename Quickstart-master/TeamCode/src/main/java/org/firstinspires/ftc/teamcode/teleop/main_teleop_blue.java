@@ -1,6 +1,10 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
+import android.provider.Settings;
+
 import com.bylazar.configurables.annotations.Configurable;
+import com.bylazar.telemetry.PanelsTelemetry;
+import com.bylazar.telemetry.TelemetryManager;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -14,6 +18,8 @@ import org.firstinspires.ftc.teamcode.subsystems.launcher;
 @Configurable
 @TeleOp(name = "main teleop blue")
 public class main_teleop_blue extends OpMode {
+
+    private TelemetryManager panelsTelemetry;
 
     drivetrain drivetrain;
     launcher launcher;
@@ -29,6 +35,7 @@ public class main_teleop_blue extends OpMode {
 
     @Override
     public void init(){
+        panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
         drivetrain = new drivetrain(hardwareMap, telemetry, false);
         launcher = new launcher(hardwareMap, telemetry);
         intake = hardwareMap.get(DcMotorEx.class, "intake");
@@ -52,7 +59,9 @@ public class main_teleop_blue extends OpMode {
         telemetry.addData("yDist", (drivetrain.pinpoint.getPosY(DistanceUnit.INCH)-blue_goal.getY(DistanceUnit.INCH)));
         telemetry.addData("distance", distance);
         telemetry.addData("angle", angle);
+        panelsTelemetry.addData("flywheel speed", launcher.getFlywheelSpeed());
         telemetry.update();
+        panelsTelemetry.update();
     }
 
     public void updateDrivetrain(double angle){

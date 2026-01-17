@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 public class launcher {
     DcMotorEx launcher;
@@ -22,5 +23,9 @@ public class launcher {
             launcher.setPower(kP*(targetSpeed-launcher.getVelocity()));
         }
         else launcher.setPower(kF+kP*(targetSpeed-launcher.getVelocity()));
+    }
+
+    public double getFlywheelSpeed(){
+        return launcher.getVelocity();
     }
 }
