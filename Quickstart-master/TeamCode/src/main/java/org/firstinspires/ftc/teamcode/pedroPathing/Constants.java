@@ -42,16 +42,18 @@ public class Constants {
     ;
 
     public static FollowerConstants followerConstants = new FollowerConstants()
-            .mass(7.26)
+            .mass(11.8)
             .forwardZeroPowerAcceleration(-54.59)
             .lateralZeroPowerAcceleration(-63.72)
-            .translationalPIDFCoefficients(new PIDFCoefficients(0.08, 0, 0.005, 0.023))
-            .headingPIDFCoefficients(new PIDFCoefficients(1,0,0.1,0.03))
-            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.07, 0, 0.005, 0.6, 0.01))
+            .translationalPIDFCoefficients(new PIDFCoefficients(0.025, 0, 0, 0.06))
+            .secondaryTranslationalPIDFCoefficients(new PIDFCoefficients(0.15, 0, 0.02, 0.02))
+            .headingPIDFCoefficients(new PIDFCoefficients(1.3,0,0.2,0.05))
+            .secondaryHeadingPIDFCoefficients(new PIDFCoefficients(1.15, 0, 0, 0.03))
+            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.1, 0, 0, 0.6, 0.06))
+            .useSecondaryDrivePIDF(true)
+            .useSecondaryHeadingPIDF(true)
+            .useSecondaryTranslationalPIDF(true)
     ;
-
-
-
 
     public static PathConstraints pathConstraints = new PathConstraints(0.99,
             100,

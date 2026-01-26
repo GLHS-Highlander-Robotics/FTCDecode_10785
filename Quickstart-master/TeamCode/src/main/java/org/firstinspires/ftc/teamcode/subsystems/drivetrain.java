@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -25,7 +26,7 @@ public class drivetrain {
     DcMotorEx lf, rf, lb, rb;
     String motornames[] = {"lf", "rf", "lb", "rb"};
     public GoBildaPinpointDriver pinpoint;
-    static double kP = 0.06, kF = 0.2, kD = 0;
+    static double kP = 0.06, kF = 0.075, kD = 0;
     double SLOW_SPEED = 0.2;
     double lastError = 0;
 
@@ -83,6 +84,10 @@ public class drivetrain {
         rb.setPower(rbp);
     }
 
+    public void stopBot(){
+        RCDrive(0,0,0);
+    }
+
     public void configurePinpoint(boolean auto){
         /*
          *  Set the odometry pod positions relative to the point that you want the position to be measured from.
@@ -130,6 +135,20 @@ public class drivetrain {
         double rotPower = (kF*Math.signum(error)+kP*(error)+kD*(error-lastError));
         FC_Drive(fwd, strf, rotPower, pinpoint.getHeading(AngleUnit.RADIANS));
         lastError = error;
+    }
+
+    public void targetAngle(double fwd, double strf, double target, double kp, double kd, double input, double deadband){
+        double error = input- target;
+        if(Math.abs(error)<=deadband){
+            error = 0;
+        }
+        double rotPower = (kF*Math.signum(error)+kp*(error)+kd*(error-lastError));
+        FC_Drive(fwd, strf, rotPower, pinpoint.getHeading(AngleUnit.RADIANS));
+        lastError = error;
+    }
+
+    public void LimeLightAlign(double fwd, double strf, double target, Limelight3A limelight){
+        targetAngle(fwd,strf, target ,0.015, 0.01, limelight.getLatestResult().getTy(), 0.10);
     }
 
     public void FC_Drive(double fwd, double strf, double rot, double heading){
