@@ -10,6 +10,7 @@ import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.Path;
+import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -43,6 +44,7 @@ public class far_blue_9 extends OpMode{
     boolean b = false;
     boolean shoot = false;
     double zeroHeading = 0;
+    static double max_ball_pickup_power = 1; //SET BETWEEN 0 and 1
 
     //Poses [ADD CONTROL POINTS!!!!!]
     static Pose start = new Pose(58, 9, Math.toRadians(90));
@@ -66,8 +68,8 @@ public class far_blue_9 extends OpMode{
     static int flywheel_speed = 1540;
     static double intake_power_regular = 0.4, intake_power_shoot = 0.3, intake_power_transfer = 0.1, transfer_power_regular = 0.15, transfer_power_shoot = 0.9;
 
-    private Path start_to_shoot, shoot_to_row1, row1, row1_to_shoot, shoot_to_corner, corner, corner_to_shoot;
-
+    private Path start_to_shoot, shoot_to_row1, row1_path, row1_to_shoot, shoot_to_corner, corner_path, corner_to_shoot;
+    private PathChain row1, corner;
     robotState state = robotState.INERT;
 
     public void buildPaths(){
@@ -75,16 +77,22 @@ public class far_blue_9 extends OpMode{
         start_to_shoot.setLinearHeadingInterpolation(start.getHeading(),shoot_pos.getHeading());
         shoot_to_row1 = new Path(new BezierLine(shoot_pos, ballrow1_begin));
         shoot_to_row1.setLinearHeadingInterpolation(shoot_pos.getHeading(), ballrow1_begin.getHeading());
-        row1 = new Path(new BezierLine(ballrow1_begin, ballrow1_end));
-        row1.setLinearHeadingInterpolation(ballrow1_begin.getHeading(), ballrow1_end.getHeading());
+        row1_path = new Path(new BezierLine(ballrow1_begin, ballrow1_end));
+        row1_path.setLinearHeadingInterpolation(ballrow1_begin.getHeading(), ballrow1_end.getHeading());
         row1_to_shoot = new Path(new BezierLine(ballrow1_end, shoot_pos));
         row1_to_shoot.setLinearHeadingInterpolation(ballrow1_end.getHeading(),shoot_pos.getHeading());
         shoot_to_corner = new Path(new BezierCurve(shoot_pos, to_corner_control, corner_begin));
         shoot_to_corner.setLinearHeadingInterpolation(shoot_pos.getHeading(), corner_begin.getHeading());
-        corner = new Path(new BezierLine(corner_begin, corner_end));
-        corner.setLinearHeadingInterpolation(corner_begin.getHeading(), corner_end.getHeading());
+        corner_path = new Path(new BezierLine(corner_begin, corner_end));
+        corner_path.setLinearHeadingInterpolation(corner_begin.getHeading(), corner_end.getHeading());
         corner_to_shoot = new Path(new BezierLine(corner_end, shoot_pos));
         corner_to_shoot.setLinearHeadingInterpolation(corner_end.getHeading(),shoot_pos.getHeading());
+        row1 = follower.pathBuilder()
+                .addPath(row1_path)
+                .build();
+        corner = follower.pathBuilder()
+                .addPath(corner_path)
+                .build();
     }
 
     @Override
@@ -196,7 +204,7 @@ public class far_blue_9 extends OpMode{
                     /* Grab Sample */
                     state = robotState.INTAKE_SPINUP;
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
-                    follower.followPath(row1,true);
+                    follower.followPath(row1, max_ball_pickup_power,true);
                     setPathState(3);
                 }
                 break;
@@ -230,7 +238,7 @@ public class far_blue_9 extends OpMode{
                     /* Grab Sample */
                     state = robotState.INTAKE_SPINUP;
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
-                    follower.followPath(corner,true);
+                    follower.followPath(corner, max_ball_pickup_power,true);
                     setPathState(7);
                 }
                 break;

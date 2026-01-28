@@ -9,6 +9,7 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.Path;
+import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -42,6 +43,7 @@ public class close_blue_12 extends OpMode{
     boolean b = false;
     boolean shoot = false;
     double zeroHeading = 0;
+    static double max_ball_pickup_power = 1;
 
     static int flywheel_speed = 1260;
     static double intake_power_regular = 0.4, intake_power_shoot = 0.3, intake_power_transfer = 0.1, transfer_power_regular = 0.15, transfer_power_shoot = 0.9;
@@ -66,7 +68,8 @@ public class close_blue_12 extends OpMode{
         SHOOT
     }
 
-    private Path start_to_shoot, shoot_to_row1, row1, row1_to_shoot, shoot_to_row2, row2, row2_to_shoot, shoot_to_row3, row3, row3_to_shoot;
+    private Path start_to_shoot, shoot_to_row1, row1_path, row1_to_shoot, shoot_to_row2, row2_path, row2_to_shoot, shoot_to_row3, row3_path, row3_to_shoot;
+    private PathChain row1, row2, row3;
 
     robotState state = robotState.INERT;
 
@@ -75,22 +78,31 @@ public class close_blue_12 extends OpMode{
         start_to_shoot.setLinearHeadingInterpolation(start.getHeading(),shoot_pos.getHeading());
         shoot_to_row1 = new Path(new BezierLine(shoot_pos, ballrow1_begin));
         shoot_to_row1.setLinearHeadingInterpolation(shoot_pos.getHeading(), ballrow1_begin.getHeading());
-        row1 = new Path(new BezierLine(ballrow1_begin, ballrow1_end));
-        row1.setLinearHeadingInterpolation(ballrow1_begin.getHeading(), ballrow1_end.getHeading());
+        row1_path = new Path(new BezierLine(ballrow1_begin, ballrow1_end));
+        row1_path.setLinearHeadingInterpolation(ballrow1_begin.getHeading(), ballrow1_end.getHeading());
         row1_to_shoot = new Path(new BezierLine(ballrow1_end, shoot_pos));
         row1_to_shoot.setLinearHeadingInterpolation(ballrow1_end.getHeading(),shoot_pos.getHeading());
         shoot_to_row2 = new Path(new BezierLine(shoot_pos, ballrow2_begin));
         shoot_to_row2.setLinearHeadingInterpolation(shoot_pos.getHeading(), ballrow2_begin.getHeading());
-        row2 = new Path(new BezierLine(ballrow2_begin, ballrow2_end));
-        row2.setLinearHeadingInterpolation(ballrow2_begin.getHeading(), ballrow2_end.getHeading());
+        row2_path = new Path(new BezierLine(ballrow2_begin, ballrow2_end));
+        row2_path.setLinearHeadingInterpolation(ballrow2_begin.getHeading(), ballrow2_end.getHeading());
         row2_to_shoot = new Path(new BezierLine(ballrow2_end, shoot_pos));
         row2_to_shoot.setLinearHeadingInterpolation(ballrow2_end.getHeading(),shoot_pos.getHeading());
         shoot_to_row3 = new Path(new BezierLine(shoot_pos, ballrow3_begin));
         shoot_to_row3.setLinearHeadingInterpolation(shoot_pos.getHeading(), ballrow3_begin.getHeading());
-        row3 = new Path(new BezierLine(ballrow3_begin, ballrow3_end));
-        row3.setLinearHeadingInterpolation(ballrow3_begin.getHeading(), ballrow3_end.getHeading());
+        row3_path = new Path(new BezierLine(ballrow3_begin, ballrow3_end));
+        row3_path.setLinearHeadingInterpolation(ballrow3_begin.getHeading(), ballrow3_end.getHeading());
         row3_to_shoot = new Path(new BezierLine(ballrow3_end, shoot_pos));
         row3_to_shoot.setLinearHeadingInterpolation(ballrow3_end.getHeading(),shoot_pos.getHeading());
+        row1 = follower.pathBuilder()
+                .addPath(row1_path)
+                .build();
+        row2 = follower.pathBuilder()
+                .addPath(row2_path)
+                .build();
+        row3 = follower.pathBuilder()
+                .addPath(row3_path)
+                .build();
     }
 
     @Override
@@ -202,7 +214,7 @@ public class close_blue_12 extends OpMode{
                     /* Grab Sample */
                     state = robotState.INTAKE_SPINUP;
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
-                    follower.followPath(row1,true);
+                    follower.followPath(row1, max_ball_pickup_power,true);
                     setPathState(3);
                 }
                 break;
@@ -237,7 +249,7 @@ public class close_blue_12 extends OpMode{
                     /* Grab Sample */
                     state = robotState.INTAKE_SPINUP;
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
-                    follower.followPath(row2,true);
+                    follower.followPath(row2, max_ball_pickup_power,true);
                     setPathState(7);
                 }
                 break;
@@ -272,7 +284,7 @@ public class close_blue_12 extends OpMode{
                     /* Grab Sample */
                     state = robotState.INTAKE_SPINUP;
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
-                    follower.followPath(row3,true);
+                    follower.followPath(row3, max_ball_pickup_power,true);
                     setPathState(11);
                 }
                 break;
