@@ -109,6 +109,10 @@ public class main_teleop_blue extends OpMode {
             intake.setPower(0.9);
             transfer.setPower(0.9);
         }
+        else if(gamepad1.left_bumper){
+            transfer.setPower(0.1);
+            intake.setPower(-0.1);
+        }
 
         else if(gamepad1.right_trigger >= 0.3){
             transfer.setPower(0.25);
@@ -137,3 +141,4 @@ public class main_teleop_blue extends OpMode {
         else launcher.powerFlywheel(0);
     }
 }
+
