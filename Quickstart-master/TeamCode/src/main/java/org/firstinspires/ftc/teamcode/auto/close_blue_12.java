@@ -51,13 +51,14 @@ public class close_blue_12 extends OpMode{
 
     //Poses [ADD CONTROL POINTS!!!!!]
     static Pose start = new Pose(22, 125, Math.toRadians(142));
-    static Pose shoot_pos = new Pose(55, 80, 2.35);
-    static Pose ballrow1_begin = new Pose(42, 84, Math.toRadians(180));
-    static Pose ballrow1_end = new Pose(16, 84, Math.toRadians(180));
+    static Pose shoot_pos = new Pose(55, 83, Math.toRadians(135));
+    static Pose ballrow1_begin = new Pose(42, 83, Math.toRadians(180));
+    static Pose ballrow1_end = new Pose(21, 83, Math.toRadians(180));
     static Pose ballrow2_begin = new Pose(42, 59, Math.toRadians(180));
-    static Pose ballrow2_end = new Pose(14, 59, Math.toRadians(180));
+    static Pose ballrow2_end = new Pose(21, 59, Math.toRadians(180));
     static Pose ballrow3_begin = new Pose(42, 36, Math.toRadians(180));
-    static Pose ballrow3_end = new Pose(15, 36, Math.toRadians(180));
+    static Pose ballrow3_end = new Pose(21, 36, Math.toRadians(180));
+    static Pose park = new Pose(42, 71, Math.toRadians(180));
 
     private enum robotState{
         INERT,
@@ -70,7 +71,7 @@ public class close_blue_12 extends OpMode{
     }
 
     private Path start_to_shoot, shoot_to_row1, row1_path, row1_to_shoot, shoot_to_row2, row2_path, row2_to_shoot, shoot_to_row3, row3_path, row3_to_shoot;
-    private PathChain row1, row2, row3;
+    private PathChain row1, row2, row3, park_path;
 
     robotState state = robotState.INERT;
 
@@ -103,6 +104,10 @@ public class close_blue_12 extends OpMode{
                 .build();
         row3 = follower.pathBuilder()
                 .addPath(row3_path)
+                .build();
+        park_path = follower.pathBuilder()
+                .addPath(new Path(new BezierLine(shoot_pos, park)))
+                .setLinearHeadingInterpolation(shoot_pos.getHeading(), park.getHeading())
                 .build();
     }
 
@@ -312,6 +317,12 @@ public class close_blue_12 extends OpMode{
                 }
                 if(pathTimer.getElapsedTimeSeconds()>stopping_wait_time_seconds+shooting_time_seconds){
                     state = robotState.INERT;
+                    follower.followPath(park_path, true);
+                    setPathState(14);
+                }
+                break;
+            case 14:
+                if(!follower.isBusy()) {
                     setPathState(-1);
                 }
                 break;

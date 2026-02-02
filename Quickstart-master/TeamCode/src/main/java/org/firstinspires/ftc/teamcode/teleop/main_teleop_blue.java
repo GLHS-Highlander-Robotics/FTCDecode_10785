@@ -54,6 +54,10 @@ public class main_teleop_blue extends OpMode {
         telemetry.update();
     }
 
+    public void start(){
+        drivetrain.pinpoint.setPosition(new Pose2D(DistanceUnit.INCH, drivetrain.pinpoint.getPosY(DistanceUnit.INCH), 144-drivetrain.pinpoint.getPosX(DistanceUnit.INCH), AngleUnit.RADIANS, drivetrain.pinpoint.getHeading(AngleUnit.RADIANS)-Math.toRadians(90)));
+    }
+
     @Override
     public void loop(){
         drivetrain.pinpoint.update();
@@ -66,6 +70,10 @@ public class main_teleop_blue extends OpMode {
             shoot = !shoot;
         }
         b = gamepad1.b;
+
+        telemetry.addData("x",drivetrain.pinpoint.getPosX(DistanceUnit.INCH));
+        telemetry.addData("y",drivetrain.pinpoint.getPosY(DistanceUnit.INCH));
+        telemetry.addData("heading",drivetrain.pinpoint.getHeading(AngleUnit.RADIANS));
 
         telemetry.addData("xDist", (drivetrain.pinpoint.getPosX(DistanceUnit.INCH)-blue_goal.getX(DistanceUnit.INCH)));
         telemetry.addData("yDist", (drivetrain.pinpoint.getPosY(DistanceUnit.INCH)-blue_goal.getY(DistanceUnit.INCH)));
@@ -85,10 +93,10 @@ public class main_teleop_blue extends OpMode {
             drivetrain.RCDrive(-0.67,0,0);
         }
         else if(gamepad1.dpad_left){
-            drivetrain.RCDrive(0,0,0.4);
+            drivetrain.RCDrive(0,0,0.2);
         }
         else if(gamepad1.dpad_right){
-            drivetrain.RCDrive(0,0,-0.4);
+            drivetrain.RCDrive(0,0,-0.2);
         }
         else{
             if(gamepad1.a){
