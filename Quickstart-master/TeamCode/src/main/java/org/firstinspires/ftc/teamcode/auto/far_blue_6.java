@@ -26,8 +26,8 @@ import org.firstinspires.ftc.teamcode.subsystems.drivetrain;
 import org.firstinspires.ftc.teamcode.subsystems.launcher;
 
 @Configurable
-@Autonomous(name = "AUTO FAR BLUE 9")
-public class far_blue_9 extends OpMode{
+@Autonomous(name = "AUTO FAR BLUE 6")
+public class far_blue_6 extends OpMode{
 
     private TelemetryManager panelsTelemetry;
     Limelight3A limelight;
