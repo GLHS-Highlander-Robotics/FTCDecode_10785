@@ -28,7 +28,7 @@ public class main_teleop_blue extends OpMode {
     drivetrain drivetrain;
     launcher launcher;
     DcMotorEx intake, transfer;
-    static double farSpeed = 1540;
+    static double farSpeed = 1520;
     static double closeSpeed = 1260;
     static double intake_speed = 0.7, transfer_speed = 0.5;
     static Pose2D blue_goal = new Pose2D(DistanceUnit.INCH, 144, 0, AngleUnit.RADIANS, 0);
@@ -116,7 +116,7 @@ public class main_teleop_blue extends OpMode {
 
     public void updateIntake(){
         if(gamepad1.left_trigger >= 0.3){
-            intake.setPower(0.9);
+            intake.setPower(1);
             transfer.setPower(0.9);
         }
         else if(gamepad1.left_bumper){
@@ -126,10 +126,10 @@ public class main_teleop_blue extends OpMode {
 
         else if(gamepad1.right_trigger >= 0.3){
             transfer.setPower(0.25);
-            intake.setPower(0.7);
+            intake.setPower(1);
         }
         else if(gamepad1.right_bumper){
-            intake.setPower(0.6);
+            intake.setPower(0.7);
         }
         else if (gamepad1.y){
             intake.setPower(-0.7);

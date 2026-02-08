@@ -52,6 +52,10 @@ public class main_teleop_red extends OpMode {
         telemetry.update();
     }
 
+    public void start(){
+        drivetrain.pinpoint.setPosition(new Pose2D(DistanceUnit.INCH, drivetrain.pinpoint.getPosY(DistanceUnit.INCH), 144-drivetrain.pinpoint.getPosX(DistanceUnit.INCH), AngleUnit.RADIANS, drivetrain.pinpoint.getHeading(AngleUnit.RADIANS)-Math.toRadians(90)));
+    }
+
     @Override
     public void loop(){
         drivetrain.pinpoint.update();
@@ -83,10 +87,10 @@ public class main_teleop_red extends OpMode {
             drivetrain.RCDrive(-0.67,0,0);
         }
         else if(gamepad1.dpad_left){
-            drivetrain.RCDrive(0,0,0.4);
+            drivetrain.RCDrive(0,0,0.2);
         }
         else if(gamepad1.dpad_right){
-            drivetrain.RCDrive(0,0,-0.4);
+            drivetrain.RCDrive(0,0,-0.2);
         }
         else{
             if(gamepad1.a){
@@ -106,7 +110,7 @@ public class main_teleop_red extends OpMode {
 
     public void updateIntake(){
         if(gamepad1.left_trigger >= 0.3){
-            intake.setPower(0.9);
+            intake.setPower(1);
             transfer.setPower(0.9);
         }
         else if(gamepad1.left_bumper){
@@ -115,10 +119,14 @@ public class main_teleop_red extends OpMode {
         } 
         else if(gamepad1.right_trigger >= 0.3){
             transfer.setPower(0.25);
-            intake.setPower(0.7);
+            intake.setPower(1);
         }
         else if(gamepad1.right_bumper){
-            intake.setPower(0.6);
+            intake.setPower(0.7);
+        }
+        else if (gamepad1.y){
+            intake.setPower(-0.7);
+            transfer.setPower(-0.7);
         }
         else{
             transfer.setPower(0);

@@ -25,8 +25,8 @@ import org.firstinspires.ftc.teamcode.subsystems.drivetrain;
 import org.firstinspires.ftc.teamcode.subsystems.launcher;
 
 @Configurable
-@Autonomous(name = "AUTO FAR BLUE 9")
-public class far_blue_9 extends OpMode{
+@Autonomous(name = "AUTO FAR RED 9")
+public class far_red_9 extends OpMode{
 
     private TelemetryManager panelsTelemetry;
     Limelight3A limelight;
@@ -50,14 +50,14 @@ public class far_blue_9 extends OpMode{
     static double intake_power_regular = 1, intake_power_shoot =1, intake_power_transfer =0.4, transfer_power_regular = 0.1, transfer_power_shoot = .9;
 
     //Poses [ADD CONTROL POINTS!!!!!]
-    static Pose start = new Pose(53, 9, Math.toRadians(90));
-    static Pose shoot_pos = new Pose(54, 13, Math.toRadians(114));
-    static Pose ballrow1_begin = new Pose(47, 37.5, Math.toRadians(210));
-    static Pose ballrow1_end = new Pose(16, 37.5, Math.toRadians(210));;
-    static Pose corner_begin = new Pose(14, 18, Math.toRadians(220));
-    static Pose corner_end = new Pose(16.5, 9.5, Math.toRadians(245));
+    static Pose start = new Pose(91, 9, Math.toRadians(90));
+    static Pose shoot_pos = new Pose(90, 13, Math.toRadians(66));
+    static Pose ballrow1_begin = new Pose(97, 37.5, Math.toRadians(330));
+    static Pose ballrow1_end = new Pose(128, 37.5, Math.toRadians(330));;
+    static Pose corner_begin = new Pose(130, 18, Math.toRadians(320));
+    static Pose corner_end = new Pose(127.5, 9.5, Math.toRadians(295));
     static Pose to_corner_control = new Pose(30, 42);
-    static Pose park = new Pose(24, 25, Math.toRadians(180));
+    static Pose park = new Pose(120, 25, Math.toRadians(0));
 
     private enum robotState{
         INERT,

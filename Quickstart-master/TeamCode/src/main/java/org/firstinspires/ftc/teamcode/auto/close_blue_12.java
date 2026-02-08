@@ -37,27 +37,27 @@ public class close_blue_12 extends OpMode{
     org.firstinspires.ftc.teamcode.subsystems.launcher launcher;
     DcMotorEx intake, transfer;
     static double farSpeed = 1540;
-    static double closeSpeed = 1360;
+    static double closeSpeed = 1380;
     static double intake_speed = 0.55, transfer_speed = 0.5;
     static Pose2D blue_goal = new Pose2D(DistanceUnit.INCH, 144, 0, AngleUnit.RADIANS, 0);
-    static double initial_spinup_time_seconds = 2.5, stopping_wait_time_seconds = 0.1, shooting_time_seconds = 2.4;
+    static double initial_spinup_time_seconds = 2.8, stopping_wait_time_seconds = 0.3, shooting_time_seconds = 2.4;
     boolean b = false;
     boolean shoot = false;
     double zeroHeading = 0;
-    static double max_ball_pickup_power = 0.3;
+    static double max_ball_pickup_power = 0.5;
 
-    static int flywheel_speed = 1280;
-    static double intake_power_regular = 0.55, intake_power_shoot = 0.55, intake_power_transfer = 0.3, transfer_power_regular = 0.2, transfer_power_shoot = 0.9;
+    static int flywheel_speed = 1260;
+    static double intake_power_regular = 1, intake_power_shoot =1, intake_power_transfer =0.4, transfer_power_regular = 0.1, transfer_power_shoot = .9;
 
     //Poses [ADD CONTROL POINTS!!!!!]
     static Pose start = new Pose(22, 125, Math.toRadians(142));
-    static Pose shoot_pos = new Pose(55, 83, Math.toRadians(135));
-    static Pose ballrow1_begin = new Pose(42, 83, Math.toRadians(180));
-    static Pose ballrow1_end = new Pose(21, 83, Math.toRadians(180));
-    static Pose ballrow2_begin = new Pose(42, 59, Math.toRadians(180));
-    static Pose ballrow2_end = new Pose(21, 59, Math.toRadians(180));
-    static Pose ballrow3_begin = new Pose(42, 36, Math.toRadians(180));
-    static Pose ballrow3_end = new Pose(21, 36, Math.toRadians(180));
+    static Pose shoot_pos = new Pose(55, 85, Math.toRadians(135));
+    static Pose ballrow1_begin = new Pose(42, 80, Math.toRadians(150));
+    static Pose ballrow1_end = new Pose(21, 80, Math.toRadians(150));
+    static Pose ballrow2_begin = new Pose(43, 56, Math.toRadians(150));
+    static Pose ballrow2_end = new Pose(21,56, Math.toRadians(150));
+    static Pose ballrow3_begin = new Pose(43, 32, Math.toRadians(150));
+    static Pose ballrow3_end = new Pose(21, 32, Math.toRadians(150));
     static Pose park = new Pose(42, 71, Math.toRadians(180));
 
     private enum robotState{

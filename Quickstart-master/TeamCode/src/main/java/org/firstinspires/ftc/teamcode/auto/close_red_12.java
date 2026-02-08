@@ -25,8 +25,8 @@ import org.firstinspires.ftc.teamcode.subsystems.drivetrain;
 import org.firstinspires.ftc.teamcode.subsystems.launcher;
 
 @Configurable
-@Autonomous(name = "AUTO FAR BLUE 9")
-public class far_blue_9 extends OpMode{
+@Autonomous(name = "AUTO CLOSE RED 12")
+public class close_red_12 extends OpMode{
 
     private TelemetryManager panelsTelemetry;
     Limelight3A limelight;
@@ -37,27 +37,28 @@ public class far_blue_9 extends OpMode{
     org.firstinspires.ftc.teamcode.subsystems.launcher launcher;
     DcMotorEx intake, transfer;
     static double farSpeed = 1540;
-    static double closeSpeed = 1360;
+    static double closeSpeed = 1380;
     static double intake_speed = 0.55, transfer_speed = 0.5;
     static Pose2D blue_goal = new Pose2D(DistanceUnit.INCH, 144, 0, AngleUnit.RADIANS, 0);
-    static double initial_spinup_time_seconds = 4.6, stopping_wait_time_seconds = 0.7, shooting_time_seconds = 2.7;
+    static double initial_spinup_time_seconds = 2.8, stopping_wait_time_seconds = 0.3, shooting_time_seconds = 2.4;
     boolean b = false;
     boolean shoot = false;
     double zeroHeading = 0;
-    static double max_ball_pickup_power = 0.6;
+    static double max_ball_pickup_power = 0.5;
 
-    static int flywheel_speed = 1500;
+    static int flywheel_speed = 1260;
     static double intake_power_regular = 1, intake_power_shoot =1, intake_power_transfer =0.4, transfer_power_regular = 0.1, transfer_power_shoot = .9;
 
     //Poses [ADD CONTROL POINTS!!!!!]
-    static Pose start = new Pose(53, 9, Math.toRadians(90));
-    static Pose shoot_pos = new Pose(54, 13, Math.toRadians(114));
-    static Pose ballrow1_begin = new Pose(47, 37.5, Math.toRadians(210));
-    static Pose ballrow1_end = new Pose(16, 37.5, Math.toRadians(210));;
-    static Pose corner_begin = new Pose(14, 18, Math.toRadians(220));
-    static Pose corner_end = new Pose(16.5, 9.5, Math.toRadians(245));
-    static Pose to_corner_control = new Pose(30, 42);
-    static Pose park = new Pose(24, 25, Math.toRadians(180));
+    static Pose start = new Pose(122, 125, Math.toRadians(38));
+    static Pose shoot_pos = new Pose(89, 85, Math.toRadians(35));
+    static Pose ballrow1_begin = new Pose(102, 80, Math.toRadians(30));
+    static Pose ballrow1_end = new Pose(123, 80, Math.toRadians(30));
+    static Pose ballrow2_begin = new Pose(101, 56, Math.toRadians(30));
+    static Pose ballrow2_end = new Pose(123,56, Math.toRadians(30));
+    static Pose ballrow3_begin = new Pose(101, 32, Math.toRadians(30));
+    static Pose ballrow3_end = new Pose(123, 32, Math.toRadians(30));
+    static Pose park = new Pose(102, 71, Math.toRadians(0));
 
     private enum robotState{
         INERT,
@@ -69,8 +70,8 @@ public class far_blue_9 extends OpMode{
         SHOOT
     }
 
-    private Path start_to_shoot, shoot_to_row1, row1_path, row1_to_shoot, shoot_to_corner, corner_path, corner_to_shoot;
-    private PathChain row1, corner, park_path;
+    private Path start_to_shoot, shoot_to_row1, row1_path, row1_to_shoot, shoot_to_row2, row2_path, row2_to_shoot, shoot_to_row3, row3_path, row3_to_shoot;
+    private PathChain row1, row2, row3, park_path;
 
     robotState state = robotState.INERT;
 
@@ -83,17 +84,26 @@ public class far_blue_9 extends OpMode{
         row1_path.setLinearHeadingInterpolation(ballrow1_begin.getHeading(), ballrow1_end.getHeading());
         row1_to_shoot = new Path(new BezierLine(ballrow1_end, shoot_pos));
         row1_to_shoot.setLinearHeadingInterpolation(ballrow1_end.getHeading(),shoot_pos.getHeading());
-        shoot_to_corner = new Path(new BezierLine(shoot_pos, corner_begin));
-        shoot_to_corner.setLinearHeadingInterpolation(shoot_pos.getHeading(), corner_begin.getHeading());
-        corner_path = new Path(new BezierLine(corner_begin, corner_end));
-        corner_path.setLinearHeadingInterpolation(corner_begin.getHeading(), corner_end.getHeading());
-        corner_to_shoot = new Path(new BezierLine(corner_end, shoot_pos));
-        corner_to_shoot.setLinearHeadingInterpolation(corner_end.getHeading(),shoot_pos.getHeading());
+        shoot_to_row2 = new Path(new BezierLine(shoot_pos, ballrow2_begin));
+        shoot_to_row2.setLinearHeadingInterpolation(shoot_pos.getHeading(), ballrow2_begin.getHeading());
+        row2_path = new Path(new BezierLine(ballrow2_begin, ballrow2_end));
+        row2_path.setLinearHeadingInterpolation(ballrow2_begin.getHeading(), ballrow2_end.getHeading());
+        row2_to_shoot = new Path(new BezierLine(ballrow2_end, shoot_pos));
+        row2_to_shoot.setLinearHeadingInterpolation(ballrow2_end.getHeading(),shoot_pos.getHeading());
+        shoot_to_row3 = new Path(new BezierLine(shoot_pos, ballrow3_begin));
+        shoot_to_row3.setLinearHeadingInterpolation(shoot_pos.getHeading(), ballrow3_begin.getHeading());
+        row3_path = new Path(new BezierLine(ballrow3_begin, ballrow3_end));
+        row3_path.setLinearHeadingInterpolation(ballrow3_begin.getHeading(), ballrow3_end.getHeading());
+        row3_to_shoot = new Path(new BezierLine(ballrow3_end, shoot_pos));
+        row3_to_shoot.setLinearHeadingInterpolation(ballrow3_end.getHeading(),shoot_pos.getHeading());
         row1 = follower.pathBuilder()
                 .addPath(row1_path)
                 .build();
-        corner = follower.pathBuilder()
-                .addPath(corner_path)
+        row2 = follower.pathBuilder()
+                .addPath(row2_path)
+                .build();
+        row3 = follower.pathBuilder()
+                .addPath(row3_path)
                 .build();
         park_path = follower.pathBuilder()
                 .addPath(new Path(new BezierLine(shoot_pos, park)))
@@ -134,10 +144,6 @@ public class far_blue_9 extends OpMode{
         follower.update();
         autonomousPathUpdate();
         updateRobot(state);
-        telemetry.addData("x", follower.getPose().getX());
-        telemetry.addData("y", follower.getPose().getY());
-        telemetry.addData("heading", follower.getPose().getHeading());
-        telemetry.update();
     }
 
     void updateRobot(robotState state) {
@@ -240,7 +246,7 @@ public class far_blue_9 extends OpMode{
                     state = robotState.SHOOT;
                 }
                 if(pathTimer.getElapsedTimeSeconds()>stopping_wait_time_seconds+shooting_time_seconds){
-                    follower.followPath(shoot_to_corner);
+                    follower.followPath(shoot_to_row2);
                     setPathState(6);
                 }
                 break;
@@ -250,7 +256,7 @@ public class far_blue_9 extends OpMode{
                     /* Grab Sample */
                     state = robotState.INTAKE_SPINUP;
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
-                    follower.followPath(corner, max_ball_pickup_power,true);
+                    follower.followPath(row2, max_ball_pickup_power,true);
                     setPathState(7);
                 }
                 break;
@@ -260,7 +266,7 @@ public class far_blue_9 extends OpMode{
                     state = robotState.TRANSFER_SPINUP;
                     /* Score Sample */
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
-                    follower.followPath(corner_to_shoot,true);
+                    follower.followPath(row2_to_shoot,true);
                     setPathState(8);
                 }
                 break;
@@ -275,12 +281,47 @@ public class far_blue_9 extends OpMode{
                     state = robotState.SHOOT;
                 }
                 if(pathTimer.getElapsedTimeSeconds()>stopping_wait_time_seconds+shooting_time_seconds){
-                    state = robotState.INERT;
-                    follower.followPath(park_path, true);
+                    follower.followPath(shoot_to_row3);
                     setPathState(10);
                 }
                 break;
             case 10:
+                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup1Pose's position */
+                if(!follower.isBusy()) {
+                    /* Grab Sample */
+                    state = robotState.INTAKE_SPINUP;
+                    /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
+                    follower.followPath(row3, max_ball_pickup_power,true);
+                    setPathState(11);
+                }
+                break;
+            case 11:
+                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
+                if(!follower.isBusy()) {
+                    state = robotState.TRANSFER_SPINUP;
+                    /* Score Sample */
+                    /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
+                    follower.followPath(row3_to_shoot,true);
+                    setPathState(12);
+                }
+                break;
+            case 12:
+                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup2Pose's position */
+                if(!follower.isBusy()) {
+                    setPathState(13);
+                }
+                break;
+            case 13:
+                if(pathTimer.getElapsedTimeSeconds() > stopping_wait_time_seconds){
+                    state = robotState.SHOOT;
+                }
+                if(pathTimer.getElapsedTimeSeconds()>stopping_wait_time_seconds+shooting_time_seconds){
+                    state = robotState.INERT;
+                    follower.followPath(park_path, true);
+                    setPathState(14);
+                }
+                break;
+            case 14:
                 if(!follower.isBusy()) {
                     setPathState(-1);
                 }
